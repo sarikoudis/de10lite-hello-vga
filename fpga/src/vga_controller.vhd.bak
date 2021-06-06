@@ -22,10 +22,7 @@ entity vga_controller is
         V_BACK_PORCH  : integer := 33;
 
         -- color spec
-        COLOR_BITNESS : integer := 4;
-		  		  d_width  : INTEGER := 4;    --width of each data word
-		  size     : INTEGER := 3600 -- =w_mem * w_mem  --number of data words the memory can store
-
+        COLOR_BITNESS : integer := 4
     );
     port (
         -- inputs
@@ -38,14 +35,7 @@ entity vga_controller is
 
         RED   : out std_logic_vector(COLOR_BITNESS-1 downto 0); -- red channel
         GREEN : out std_logic_vector(COLOR_BITNESS-1 downto 0); -- green channel
-        BLUE  : out std_logic_vector(COLOR_BITNESS-1 downto 0);  -- blue channel
-		  --- new ones for ram
-		  		  --- the new ones for ram --- remember the "should be missing ;"
-			 wr_ena   : IN   STD_LOGIC;                             --write enable
-			 addr     : IN   INTEGER RANGE 0 TO size-1;             --address to write/read
-			 data_in  : IN   STD_LOGIC_VECTOR(d_width-1 DOWNTO 0);  --input data to write
-			 data_out : OUT  STD_LOGIC_VECTOR(d_width-1 DOWNTO 0) --output data read		  
-
+        BLUE  : out std_logic_vector(COLOR_BITNESS-1 downto 0)  -- blue channel
     );
 end entity;
 
@@ -75,11 +65,7 @@ architecture A of vga_controller is
 
             -- address width
             H_ADDR_WIDTH : integer;
-            V_ADDR_WIDTH : integer;
-				--for memory
-				d_width  : INTEGER := 4;    --width of each data word
-			size     : INTEGER := 3600 -- =w_mem * w_mem  --number of data words the memory can store
-				
+            V_ADDR_WIDTH : integer
         );
         port (
             -- pixel address inputs
@@ -89,14 +75,7 @@ architecture A of vga_controller is
             -- outputs
             RED   : out std_logic_vector(COLOR_BITNESS-1 downto 0); -- red channel
             GREEN : out std_logic_vector(COLOR_BITNESS-1 downto 0); -- green channel
-            BLUE  : out std_logic_vector(COLOR_BITNESS-1 downto 0);  -- blue channel
-						  --- the new ones for ram --- remember the "should be missing ;"
-			 clk      : IN   STD_LOGIC;                             --system clock
-			 wr_ena   : IN   STD_LOGIC;                             --write enable
-			 addr     : IN   INTEGER RANGE 0 TO size-1;             --address to write/read
-			 data_in  : IN   STD_LOGIC_VECTOR(d_width-1 DOWNTO 0);  --input data to write
-			 data_out : OUT  STD_LOGIC_VECTOR(d_width-1 DOWNTO 0) --output data read		  
-
+            BLUE  : out std_logic_vector(COLOR_BITNESS-1 downto 0)  -- blue channel
         );
     end component;
 
@@ -129,12 +108,6 @@ architecture A of vga_controller is
 
     -- video blanking active high
     signal video_blank : std_logic;
-	 --- ram signals
---	 signal mclk, mwr_ena : std_logic;
---	 signal maddr : INTEGER RANGE 0 TO size-1;
---	 signal  mdata_in, mdata_out : STD_LOGIC_VECTOR(d_width-1 DOWNTO 0);
-	 
-	 
 begin
     -- column counter
     col_counter : nru_counter
@@ -153,10 +126,7 @@ begin
                      H_ADDR_WIDTH => col_counter_width,
                      V_ADDR_WIDTH => row_counter_width)
         port map (col_addr => Q_col, row_addr => Q_row,
-                  RED => RED_tmp, GREEN => GREEN_tmp, BLUE => BLUE_tmp,
-						clk => clk, wr_ena => wr_ena, addr => addr,  data_in => data_in,
-						data_out => data_out
-						);
+                  RED => RED_tmp, GREEN => GREEN_tmp, BLUE => BLUE_tmp);
 
     -- column counter nreset
     col_reset <= '0' when Q_col >= N_col-1 or nreset='0' else
